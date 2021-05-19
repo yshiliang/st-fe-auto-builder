@@ -1,0 +1,19 @@
+{
+  "name": "febuilder",
+  "version": "0.0.1",
+  "description": "auto builder for FE",
+  "main": "",
+  "author": "yangshiliang",
+  "license": "MIT",
+  "dependencies": {
+    "colors": "^1.4.0",
+    "moment": "^2.29.1",
+    "shelljs": "^0.8.4",
+    "yargs": "^17.0.1"
+  },
+  "devDependencies": {
+    "@types/colors": "^1.2.1",
+    "@types/shelljs": "^0.8.8",
+    "@types/yargs": "^16.0.1"
+  }
+}
