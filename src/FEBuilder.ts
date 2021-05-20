@@ -59,12 +59,14 @@ export default class FEBuilder {
             }
         }
 
+        const buildEndTime = new Date().getTime();
+        FELog.log(`build cost time ${(buildEndTime - startTime) / 1000}s`);
         if (success) {
-            //TODO upload
+            await builder!.upload();
         }
         task?.clean();
         const endTime = new Date().getTime();
-        FELog.log(`cost time ${(endTime - startTime) / 1000}s`);
+        FELog.log(`all cost time ${(endTime - startTime) / 1000}s`);
         return success;
     }
 }

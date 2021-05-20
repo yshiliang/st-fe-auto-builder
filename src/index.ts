@@ -63,8 +63,8 @@ yargs(process.argv.slice(2)).version('0.0.1')
             channel: argv.channel,
             version: argv["build-version"],
             branch: 'dev.ysl',
-            // url: 'http://git.keking.cn/logistics-front/banma-web-ctms-pc.git'
-            url: 'http://git.keking.cn/app_ios/keking-app-ctms.git',
+            url: 'http://git.keking.cn/logistics-front/banma-web-ctms-pc.git',
+            // url: 'http://git.keking.cn/app_ios/keking-app-ctms.git',
 
             ossKeyPrefix: "app/app_mgmt_uat/private_test",
             ossAK: "LTAI4FvqxFnWkU9KUogkCYZw",

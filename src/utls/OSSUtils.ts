@@ -21,11 +21,13 @@ export default class OSSUtils {
 
     private static async _upload(name: string, localfile: string, client: OSS) {
         if (fs.statSync(localfile).isDirectory()) {
-            fs.readdirSync(localfile).forEach(async filename => {
+            const list = fs.readdirSync(localfile);
+            while (list.length) {
+                const filename = list.shift();
                 await this._upload(`${name}/${filename}`, `${localfile}/${filename}`, client);
-            })
+            }
         } else {
-            await client.put(name, localfile);
+            await client.put(name, localfile, { timeout: 0 });
         }
     }
 }

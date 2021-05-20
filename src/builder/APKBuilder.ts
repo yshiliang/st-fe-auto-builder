@@ -27,6 +27,14 @@ export default class APKBuilder extends AbsBuilder {
         }
 
         const originAPKPath = path.resolve(this.config.build.projectRootDir, `app/build/outputs/apk/${variantsName}/app-${variantsName}.apk`);
+        const originUnsignedAPKPath = path.resolve(this.config.build.projectRootDir, `app/build/outputs/apk/${variantsName}/app-${variantsName}-unsigned.apk`);
+        if (fs.existsSync(originUnsignedAPKPath)) {
+            if (!this.resign(originUnsignedAPKPath, originAPKPath)) {
+                FELog.error(`签名失败: ${originUnsignedAPKPath}`);
+                return false;
+            }
+        }
+
         if (!fs.existsSync(originAPKPath)) {
             FELog.error(`打包结果不存在: ${originAPKPath}`);
             return false;
@@ -64,12 +72,7 @@ export default class APKBuilder extends AbsBuilder {
             const apkPath = shelljs.ls('-L', jiaguOutputTmpDir)[0]
             rt = false
             if (apkPath) {
-                const signInfo = this.config.sign?.android;
-                const signShell = `jarsigner -verbose -keystore ${signInfo?.keystorePath} \
-                                    -storepass ${signInfo?.keystorePassword} \
-                                    -keypass ${signInfo?.keyPassword} \
-                                    -signedjar ${outputApkPath} ${path.resolve(jiaguOutputTmpDir, apkPath)} ${signInfo?.keyAlias}`
-                rt = shelljs.exec(signShell).code === 0
+                rt = this.resign(path.resolve(jiaguOutputTmpDir, apkPath), outputApkPath);
             }
         }
 
@@ -77,10 +80,23 @@ export default class APKBuilder extends AbsBuilder {
         return rt
     }
 
+    resign(unsignedApkPath: string, outputApkPath: string) {
+        const signInfo = this.config.sign?.android;
+        if (!signInfo) {
+            FELog.error('签名信息不存在，无法签名！');
+            return false;
+        }
+        const signShell = `jarsigner -verbose -keystore ${signInfo?.keystorePath} \
+                            -storepass ${signInfo?.keystorePassword} \
+                            -keypass ${signInfo?.keyPassword} \
+                            -signedjar ${outputApkPath} ${unsignedApkPath} ${signInfo?.keyAlias}`
+        return shelljs.exec(signShell).code === 0
+    }
+
     async upload() {
         const ossFileName = `${this.outputFilePrefix()}${(this.config.sign?.android?.jiagu) ? '_jiagu_resign' : ''}.apk`;
         if (this.config.output?.oss) {
-            await OSSUtils.upload(`${this.config.output.oss.ossKeyPrefix}/${ossFileName}`, this.apkPath!, this.config.output?.oss);
+            await OSSUtils.upload(`${this.config.output.oss.ossKeyPrefix}/${ossFileName}`, this.apkPath!, this.config.output.oss);
         }
     }
 }

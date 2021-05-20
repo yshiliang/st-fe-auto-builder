@@ -42,14 +42,14 @@ export default class APKBuildTask extends AbsBuildTask {
             } else {
                 const matchArray = fs.readFileSync(path.resolve(config.build.projectRootDir, 'gradle.properties')).toString().match(/APP_VERSION.*=.*/);
                 if (matchArray) {
-                    config.build.version = matchArray[0].replace('APP_VERSION.*=', '').trim();
+                    config.build.version = matchArray[0].replace(/APP_VERSION.*=/, '').trim();
                 }
             }
             shelljs.sed('-i', /BUILD_CODE.*=.*/, `BUILD_CODE=${config.build.buildCode}`, './gradle.properties');
 
             if (config.build.projectType === 'rn') {
                 rt = FEFSUtils.exchangeRNEnvironmentConfig(this.mainProjectRootDir!, config.build.env, config.build.channel);
-                shelljs.sed('-i', /\"versionCode\":.*,/, `\"versionCode\": ${config.build.bundleBuildCode},`, '../package.json');//处理 rn build code
+                shelljs.sed('-i', /\"versionCode.*\":.*,/, `\"versionCode\": ${config.build.bundleBuildCode},`, '../package.json');//处理 rn build code
             }
         }
 
