@@ -1,5 +1,5 @@
 import AbsBuilder from "../builder/AbsBuilder";
-import FEBuilderConfig, { BuildOptions, FEArgv, OperateRecord, Output, Repository, verifyBuildType } from "../FEBuilderConfig";
+import FEBuilderConfig, { BuildOptions, FEArgv, OperateRecord, Output, Repository, Sign, verifyBuildType } from "../FEBuilderConfig";
 import path from 'path'
 import fs from 'fs'
 import shelljs from 'shelljs'
@@ -61,7 +61,7 @@ export default class AbsBuildTask {
 
         //clone代码，并切换到正确分支
         let latestSubmitId = '';
-        FELog.log(`workspace is ${this.workspace}`)
+        FELog.log(`workspace is ${this.workspace}`);
         let code = shelljs.cd(this.workspace).code;
         if (code === 0) {
             FELog.log(`git clone ${this.argv.url} and checkout to Branch origin/${this.argv.branch}`);
@@ -102,7 +102,7 @@ export default class AbsBuildTask {
     clean() {
         if (this.workspace) {
             shelljs.cd(Constants.AUTO_BUILD_HOME_DIR);
-            FELog.log(`清理工作空间：rm -rf ${this.workspace}`)
+            FELog.log(`清理工作空间：rm -rf ${this.workspace}`);
             fs.rmSync(this.workspace, { recursive: true, force: true });
         }
     }
@@ -112,14 +112,29 @@ export default class AbsBuildTask {
             url: argv.url,
             branch: argv.branch,
         }
+
         const output: Output = {}
-        if (argv.ossKeyPrefix && argv.ossAK && argv.ossAS) {
+        if (argv.ossKeyPrefix && argv.ossAK && argv.ossAS && argv.ossBucket && argv.ossEndpoint) {
             output.oss = {
-                ossAK: argv.ossAK,
-                ossAS: argv.ossAS,
-                ossKeyPrefix: argv.ossKeyPrefix
+                ossKeyPrefix: `${argv.ossKeyPrefix || 'FE_AUTO_BUILD_OUTPUT'}/${argv.appId}/${argv.buildType}/${argv.env}`,
+                accessKeyId: argv.ossAK,
+                accessKeySecret: argv.ossAS,
+                bucket: argv.ossBucket,
+                endpoint: argv.ossEndpoint,
             }
         }
+
+        const sign: Sign = {}
+        if (argv.keystorePath && argv.keyAlias && argv.keyPassword && argv.keystorePassword) {
+            sign.android = {
+                keystorePath: argv.keystorePath,
+                keyAlias: argv.keyAlias,
+                keystorePassword: argv.keystorePassword,
+                keyPassword: argv.keyPassword,
+                jiagu: !!argv.jiagu,
+            }
+        }
+
         const operateRecord: OperateRecord = {
             operator: argv.operator,
             from: argv.from
@@ -140,15 +155,14 @@ export default class AbsBuildTask {
         }
 
         buildCodeInfo.save();
-        const feconfig: FEBuilderConfig = {
+        return {
             appId: argv.appId,
             build: buildOptions,
             repo,
             output,
+            sign,
             operateRecord
-        }
-
-        return feconfig;
+        } as FEBuilderConfig
     }
 
     //子类实现

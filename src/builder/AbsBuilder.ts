@@ -16,13 +16,17 @@ export default class AbsBuilder {
      */
     async build(): Promise<boolean> { return false }
 
+    async upload() { return }
+
     outputFilePrefix() {
-        let buildCodeStr = `${this.config.build.buildCode}`
-        let remainCount = 5 - buildCodeStr.length
+        let buildCodeStr = `${this.config.build.buildCode}`;
+        let remainCount = 5 - buildCodeStr.length;
         while (remainCount > 0) {
-            buildCodeStr = `0${buildCodeStr}`
-            remainCount--
+            buildCodeStr = `0${buildCodeStr}`;
+            remainCount--;
         }
-        return `${this.config.appId}_${this.config.build.env}_${buildCodeStr}_v${this.config.build.version}${this.config.build.channel ? `_${this.config.build.channel}` : ''}`
+
+        const suffix = this.config.build.channel ? `_${this.config.build.channel}` : '';
+        return `${this.config.appId}_${this.config.build.env}_${buildCodeStr}_v${this.config.build.version}${suffix}`;
     }
 }

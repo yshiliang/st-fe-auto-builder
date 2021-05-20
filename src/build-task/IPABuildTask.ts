@@ -36,7 +36,6 @@ export default class IPABuildTask extends AbsBuildTask {
     //准备打包环境
     protected onPrepareBuildEnvironment(config: FEBuilderConfig): boolean {
         let appName = FEFSUtils.findFilenameWithExtension(config.build.projectRootDir, 'xcodeproj');
-        console.log('app name is ', appName);
         let rt = shelljs.cd(config.build.projectRootDir).code === 0;
         if (rt) {
             const plistPath = `./${appName}/Info.plist`;
@@ -54,7 +53,7 @@ export default class IPABuildTask extends AbsBuildTask {
                 shelljs.sed('-i', /\"versionCode\":.*,/, `\"versionCode\": ${config.build.bundleBuildCode},`, '../package.json');//处理 rn build code
             }
         }
-        return false;
+        return rt;
     }
 
     protected onCreateBuilder(config: FEBuilderConfig) {

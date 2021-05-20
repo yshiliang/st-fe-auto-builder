@@ -88,4 +88,12 @@ export default class FEFSUtils {
 
         return name;
     }
+
+    static sizeOfFile(filePath: string) {
+        return fs.statSync(filePath).size;
+    }
+
+    static md5OfFile(filePath: string) {
+        return shelljs.exec(`MD5 ${filePath} | awk '{print $4}'`).stdout.trim();
+    }
 }

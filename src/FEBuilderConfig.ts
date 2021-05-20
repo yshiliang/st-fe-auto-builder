@@ -33,11 +33,20 @@ export interface FEArgv {
     //output
     ossKeyPrefix?: string;
     ossAS?: string;
-    ossAK?: string
+    ossAK?: string;
+    ossBucket?: string;
+    ossEndpoint?: string;
 
     //repo
     url?: string;
     branch?: string;
+
+    //android sign
+    keystorePath?: string;
+    keyAlias?: string;
+    keystorePassword?: string;
+    keyPassword?: string;
+    jiagu?: boolean;
 
     //operate record
     operator?: string;
@@ -66,7 +75,6 @@ export interface Sign {
         exportOptionsForAppStroe: string;
     },
     android?: {
-        signIdentity: string;
         keystorePath: string;
         keyAlias: string;
         keystorePassword: string;
@@ -76,7 +84,13 @@ export interface Sign {
 }
 
 export interface Output {
-    oss?: { ossKeyPrefix: string; ossAS: string; ossAK: string };//打包结果上传到OSS
+    oss?: {
+        ossKeyPrefix: string;
+        accessKeyId: string;
+        accessKeySecret: string;
+        bucket: string;
+        endpoint: string;
+    };//打包结果上传到OSS
 }
 
 export interface Repository {
@@ -95,6 +109,6 @@ export default interface FEBuilderConfig {
     build: BuildOptions;//打包参数配置
     output?: Output;//
     repo?: Repository;//代码仓库
-    operateRecord?: OperateRecord;
     sign?: Sign;
+    operateRecord?: OperateRecord;
 }
