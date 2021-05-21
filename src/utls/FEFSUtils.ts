@@ -10,13 +10,13 @@ const isString = (data: any) => {
 
 export default class FEFSUtils {
     /**
-     * 判断特定文件是否存在于指定目录下，若存在，则返回此全目录路径，仅检查两级目录
+     * 判断特定文件是否存在于指定目录/二级子目录下，若存在，则返回目录路径，仅检查两级目录
      * @param dir 
      * @param filename 
      * @returns 
      */
     static hasFile(dir: string, filename: string | RegExp) {
-        if (!dir || !filename || !fs.statSync(dir).isDirectory()) {
+        if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
             return null
         }
 
@@ -25,16 +25,15 @@ export default class FEFSUtils {
 
         let targetDir: string | null = null;
         fs.readdirSync(dir).forEach(name => {
+            if (targetDir) return;
             console.log('filename :', name);
             if (filename instanceof RegExp && filename.test(name)) {
                 targetDir = dir;
             }
 
-
+            if (targetDir) return;
 
             const p = path.resolve(dir, name);
-
-
             if (!fs.statSync(p).isDirectory()) {
                 return;
             }
@@ -72,7 +71,7 @@ export default class FEFSUtils {
     }
 
     static findFilenameWithExtension(dir: string, ext: string) {
-        if (!dir || !ext || !fs.statSync(dir).isDirectory()) {
+        if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
             return null;
         }
 

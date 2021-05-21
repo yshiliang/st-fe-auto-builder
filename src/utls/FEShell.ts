@@ -52,7 +52,7 @@ export default class FEShell {
         let code = shelljs.cd(dir).code;
         FELog.log('start pod install');
         if (code === 0) code = shelljs.exec('pod install').code;
-        if (code !== 0) FELog.log('end pod install');
+        if (code === 0) FELog.log('end pod install');
         else {
             FELog.error('pod install 失败');
             return false;

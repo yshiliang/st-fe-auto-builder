@@ -48,6 +48,10 @@ export interface FEArgv {
     keyPassword?: string;
     jiagu?: boolean;
 
+    //ios sign
+    signIdentify?: string;
+    profileUUID?: string;
+
     //operate record
     operator?: string;
     from?: string;
@@ -70,9 +74,6 @@ export interface Sign {
     ios?: {
         signIdentity: string;
         profileUUID: string;
-        //导出选项
-        exportOptionsForADHOC: string;
-        exportOptionsForAppStroe: string;
     },
     android?: {
         keystorePath: string;

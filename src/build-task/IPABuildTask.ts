@@ -36,7 +36,8 @@ export default class IPABuildTask extends AbsBuildTask {
     //准备打包环境
     protected onPrepareBuildEnvironment(config: FEBuilderConfig): boolean {
         let appName = FEFSUtils.findFilenameWithExtension(config.build.projectRootDir, 'xcodeproj');
-        let rt = shelljs.cd(config.build.projectRootDir).code === 0;
+        console.log('app name is :', appName);
+        let rt = !!appName && shelljs.cd(config.build.projectRootDir).code === 0;
         if (rt) {
             const plistPath = `./${appName}/Info.plist`;
             const pbxprojPath = `./${appName}.xcodeproj/project.pbxproj`;
@@ -49,7 +50,7 @@ export default class IPABuildTask extends AbsBuildTask {
             if (rt) rt = shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${config.build.buildCode}" ${plistPath}`).code === 0;
 
             if (rt && config.build.projectType === 'rn') {
-                rt = FEFSUtils.exchangeRNEnvironmentConfig(config.build.projectRootDir, config.build.env, config.build.channel);
+                rt = FEFSUtils.exchangeRNEnvironmentConfig(this.mainProjectRootDir!, config.build.env, config.build.channel);
                 shelljs.sed('-i', /\"versionCode\":.*,/, `\"versionCode\": ${config.build.bundleBuildCode},`, '../package.json');//处理 rn build code
             }
         }

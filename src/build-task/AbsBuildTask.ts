@@ -89,6 +89,7 @@ export default class AbsBuildTask {
             return;
         }
 
+        FELog.log(`projectRootDir is ${projectRootDir}`);
         const feconfig = this.createFEBuildConfig(this.argv, projectRootDir, dist, latestSubmitId);
         if (!this.onPrepareBuildEnvironment(feconfig)) {
             FELog.error('打包环境准备失败');
@@ -132,6 +133,13 @@ export default class AbsBuildTask {
                 keystorePassword: argv.keystorePassword,
                 keyPassword: argv.keyPassword,
                 jiagu: !!argv.jiagu,
+            }
+        }
+
+        if (argv.signIdentify && argv.profileUUID) {
+            sign.ios = {
+                signIdentity: argv.signIdentify,
+                profileUUID: argv.profileUUID,
             }
         }
 

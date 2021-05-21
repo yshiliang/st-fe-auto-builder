@@ -63,20 +63,19 @@ yargs(process.argv.slice(2)).version('0.0.1')
             channel: argv.channel,
             version: argv["build-version"],
             branch: 'dev.ysl',
-            url: 'http://git.keking.cn/logistics-front/banma-web-ctms-pc.git',
-            // url: 'http://git.keking.cn/app_ios/keking-app-ctms.git',
+            // url: 'http://git.keking.cn/logistics-front/banma-web-ctms-pc.git',
+            url: 'http://git.keking.cn/app_ios/keking-app-ctms.git',
 
-            ossKeyPrefix: "app/app_mgmt_uat/private_test",
-            ossAK: "LTAI4FvqxFnWkU9KUogkCYZw",
-            ossAS: 'nmygVsA2KtdPul4AV0C87CyEumIqCA',
-            ossBucket: 'bm-file-uat',
-            ossEndpoint: 'https://oss-cn-shanghai.aliyuncs.com',
+            
 
             keystorePath: '/Users/y.liang/.ST_AUTO_BUILD_HOME/_keystore/release-key.keystore',
             keyAlias: 'release-alias.keystore',
             keystorePassword: 'CoM_mUstANg_aPp_oSe820t3Y21Z5',
             keyPassword: 'CoM_mUstANg_aPp_oSe820t3Y21Z5',
             jiagu: true,
+
+            signIdentify: 'Apple Distribution: Shanghai Banma Laila Logistics Technology Co., Ltd. (F65G38NM7G)',
+            profileUUID: '8d9a23bc-a476-429b-87bf-9256ed365f52',
         })
     })
     .locale('en')
