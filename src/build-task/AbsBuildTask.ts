@@ -56,7 +56,7 @@ export default class AbsBuildTask {
             fs.mkdirSync(this.workspace, { recursive: true });
         } else {
             FELog.error(`工作目录${this.workspace}已经存在，请检查是否有正在进行中的打包任务`);
-            return;
+            throw new Error(`工作目录${this.workspace}已经存在，请检查是否有正在进行中的打包任务`);
         }
 
         //clone代码，并切换到正确分支
@@ -78,7 +78,7 @@ export default class AbsBuildTask {
             return;
         }
 
-        const projectRootDir = this.onVerifyProjectRootDir();
+        const projectRootDir = this.onCheckProjectRootDir();
         if (!projectRootDir) {
             FELog.error(`工程根目录不正确，没有找到工程特定的标志文件`);
             return;
@@ -174,7 +174,7 @@ export default class AbsBuildTask {
     }
 
     //子类实现
-    protected onVerifyProjectRootDir(): string | null { return null }
+    protected onCheckProjectRootDir(): string | null { return null }
     protected onInstallDependencies(projectRootDir: string): boolean { return false }
     protected onPrepareBuildEnvironment(config: FEBuilderConfig): boolean { return false }
     protected onCreateBuilder(config: FEBuilderConfig): AbsBuilder | null { return null }

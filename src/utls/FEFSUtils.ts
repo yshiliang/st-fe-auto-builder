@@ -11,40 +11,47 @@ const isString = (data: any) => {
 export default class FEFSUtils {
     /**
      * 判断特定文件是否存在于指定目录/二级子目录下，若存在，则返回目录路径，仅检查两级目录
+     * 默认忽略隐藏目录
      * @param dir 
      * @param filename 
      * @returns 
      */
-    static hasFile(dir: string, filename: string | RegExp) {
-        if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
+    static hasFile(dir: string, filename: string | RegExp, deep: number = 2): string | null {
+        if (deep < 1 || !fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) {
             return null
         }
 
-        console.log('in dir :', dir);
+        console.log(`SEARCH ${filename} in dir :`, dir);
         if (isString(filename) && fs.existsSync(path.resolve(dir, filename as string))) return dir;
 
         let targetDir: string | null = null;
-        fs.readdirSync(dir).forEach(name => {
-            if (targetDir) return;
-            console.log('filename :', name);
-            if (filename instanceof RegExp && filename.test(name)) {
-                targetDir = dir;
+        const fileList = fs.readdirSync(dir);
+        const subDirList: string[] = [];
+        while (!targetDir && fileList.length > 0) {
+            const name = fileList.shift();
+            if (name && !name.startsWith('.')) {
+                console.log('filename :', name);
+                if (filename instanceof RegExp && filename.test(name)) {
+                    targetDir = dir;
+                    break;
+                }
+
+                //下一级目录
+                const subDir = path.resolve(dir, name);
+                if (fs.statSync(subDir).isDirectory()) {
+                    subDirList.push(subDir);
+                }
             }
+        }
 
-            if (targetDir) return;
-
-            const p = path.resolve(dir, name);
-            if (!fs.statSync(p).isDirectory()) {
-                return;
+        while (!targetDir && subDirList.length > 0) {
+            const subDir = subDirList.shift();
+            if (subDir) {
+                targetDir = this.hasFile(subDir, filename, deep - 1);
             }
+        }
 
-            if ((isString(filename) && fs.existsSync(path.resolve(p, filename as string))) ||
-                (filename instanceof RegExp && filename.test(name))) {
-                targetDir = p;
-            }
-        })
-
-        console.log('found target dir :', targetDir);
+        FELog.log(`Found target dir :${targetDir}`);
         return targetDir;
     }
 
@@ -52,7 +59,7 @@ export default class FEFSUtils {
         //配置打包环境，即根据【env】重写env.js的内容
         const envDir = path.resolve(projectRootDir, 'env');
         const evnJs = path.resolve(envDir, 'env.js');
-        const envTargetJs = path.resolve(envDir, `env.${env}.js`)
+        const envTargetJs = path.resolve(envDir, `env.${env}.js`);
 
         if (!fs.existsSync(envTargetJs)) {
             FELog.error(`打包环境【${env}】不存在，请先检查【[PRO_ROOT_DIR]/env】目录！`);
@@ -76,14 +83,19 @@ export default class FEFSUtils {
         }
 
         let name: string | null = null;
-        console.log('dir :', dir);
-        fs.readdirSync(dir).forEach(filename => {
-            console.log('filename :', name);
-            const arr = filename.split('.');
-            if (arr.length > 1 && arr.pop() === ext) {
-                name = arr.join('.');
+        console.log(`SEARCH [${ext}] in dir :`, dir);
+        const fileList = fs.readdirSync(dir);
+        while (!name && fileList.length > 0) {
+            const filename = fileList.shift();
+            console.log('filename :', filename);
+            if (filename) {
+                const arr = filename.split('.');
+                if (arr.length > 1 && arr.pop() === ext) {
+                    name = arr.join('.');
+                    name && FELog.log(`Found target file :${filename}`);
+                }
             }
-        })
+        }
 
         return name;
     }

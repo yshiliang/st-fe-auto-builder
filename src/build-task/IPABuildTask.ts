@@ -11,7 +11,7 @@ export default class IPABuildTask extends AbsBuildTask {
     private mainProjectRootDir: string | null = null;//宿主工程根目录
 
     //检查项目类型是否正确（有没有对应的配置文件）
-    protected onVerifyProjectRootDir(): string | null {
+    protected onCheckProjectRootDir(): string | null {
         FELog.log('工程根目录验证: 检查*.xcodeproj是否存在');
         let projectRootDir = this.workspace;
         if (this.argv.projectType === 'rn') {

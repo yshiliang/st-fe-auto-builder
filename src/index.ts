@@ -66,7 +66,7 @@ yargs(process.argv.slice(2)).version('0.0.1')
             // url: 'http://git.keking.cn/logistics-front/banma-web-ctms-pc.git',
             url: 'http://git.keking.cn/app_ios/keking-app-ctms.git',
 
-            
+
 
             keystorePath: '/Users/y.liang/.ST_AUTO_BUILD_HOME/_keystore/release-key.keystore',
             keyAlias: 'release-alias.keystore',

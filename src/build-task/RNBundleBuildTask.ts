@@ -9,7 +9,7 @@ import FEShell from "../utls/FEShell";
 
 export default class RNBundleBuildTask extends AbsBuildTask {
     //检查项目类型是否正确（有没有对应的配置文件）
-    protected onVerifyProjectRootDir(): string | null {
+    protected onCheckProjectRootDir(): string | null {
         FELog.log('工程根目录验证: 检查metro.config.js是否存在');
         let projectRootDir = this.workspace;
         return projectRootDir ? FEFSUtils.hasFile(projectRootDir, 'metro.config.js') : null;
