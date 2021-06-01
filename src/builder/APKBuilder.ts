@@ -5,6 +5,7 @@ import path from 'path'
 import FELog from "../utls/FELog";
 import Constants from "../Constants";
 import OSSUtils from "../utls/OSSUtils";
+import HttpClient from "../utls/HttpClient";
 
 export default class APKBuilder extends AbsBuilder {
     apkPath: string | null = null;
@@ -95,8 +96,9 @@ export default class APKBuilder extends AbsBuilder {
 
     async upload() {
         const ossFileName = `${this.outputFilePrefix()}${(this.config.sign?.android?.jiagu) ? '_jiagu_resign' : ''}.apk`;
-        if (this.config.output?.oss) {
-            await OSSUtils.upload(`${this.config.output.oss.ossKeyPrefix}/${ossFileName}`, this.apkPath!, this.config.output.oss);
+        if (this.config.output?.oss && this.apkPath) {
+            await OSSUtils.upload(`${this.config.output.oss.ossKeyPrefix}/${ossFileName}`, this.apkPath, this.config.output.oss);
+            await HttpClient.submitAppRecord(this.config, this.apkPath, ossFileName);
         }
     }
 }

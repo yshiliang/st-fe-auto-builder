@@ -6,6 +6,7 @@ import FEShell from "../utls/FEShell";
 import FELog from "../utls/FELog";
 import FEFSUtils from "../utls/FEFSUtils";
 import OSSUtils from "../utls/OSSUtils";
+import HttpClient from "../utls/HttpClient";
 
 export default class IPABuilder extends AbsBuilder {
     ipaPath: string | null = null;
@@ -27,7 +28,7 @@ export default class IPABuilder extends AbsBuilder {
             FELog.error('工程主目录下配置文件缺失：ExportOptions.plist');
             return false;
         }
-        if (this.config.build.env === 'prd' && !fs.existsSync(exportOptionsForAppStroe)) {
+        if (this.config.build.isPrdEnv && !fs.existsSync(exportOptionsForAppStroe)) {
             FELog.error('工程主目录下配置文件缺失：ExportOptions_appstore.plist');
             return false;
         }
@@ -66,7 +67,7 @@ export default class IPABuilder extends AbsBuilder {
             rtCode = shelljs.exec(exportIpaAdhocShell).code
         }
 
-        if (rtCode === 0 && this.config.build.env === 'prd') {
+        if (rtCode === 0 && this.config.build.isPrdEnv) {
             rtCode = shelljs.exec(export_ipa_appstore_shell).code
         }
 
@@ -83,8 +84,8 @@ export default class IPABuilder extends AbsBuilder {
     async upload() {
         const ossFileName = `${this.outputFilePrefix()}.ipa`
         const ossInfo = this.config.output?.oss;
-        if (ossInfo && this.appName) {
-            await OSSUtils.upload(`${ossInfo.ossKeyPrefix}/${ossFileName}`, this.ipaPath!, ossInfo);
+        if (ossInfo && this.appName && this.ipaPath) {
+            await OSSUtils.upload(`${ossInfo.ossKeyPrefix}/${ossFileName}`, this.ipaPath, ossInfo);
 
             //itms.plist
             const infoPlistPath = `./${this.appName}/Info.plist`;
@@ -104,6 +105,7 @@ export default class IPABuilder extends AbsBuilder {
 
             const ossITMSKey = `${ossInfo.ossKeyPrefix}/${this.outputFilePrefix()}_itms.plist`
             await OSSUtils.upload(ossITMSKey, itmsPlist, ossInfo);
+            await HttpClient.submitAppRecord(this.config, this.ipaPath, ossFileName);
         }
     }
 }

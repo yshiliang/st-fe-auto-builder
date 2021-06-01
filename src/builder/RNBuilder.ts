@@ -5,6 +5,7 @@ import path from 'path'
 import FELog from "../utls/FELog";
 import FEShell from "../utls/FEShell";
 import OSSUtils from "../utls/OSSUtils";
+import HttpClient from "../utls/HttpClient";
 
 export default class RNBuilder extends AbsBuilder {
     iosZipPath: string | null = null;
@@ -82,6 +83,7 @@ export default class RNBuilder extends AbsBuilder {
             const ossFileName = `${this.outputFilePrefix()}_rn_bundle_ios.zip`;
             if (this.config.output?.oss) {
                 await OSSUtils.upload(`${this.config.output.oss.ossKeyPrefix}/${ossFileName}`, this.iosZipPath, this.config.output.oss);
+                await HttpClient.submitAppRecord(this.config, this.iosZipPath, ossFileName);
             }
         }
 
@@ -89,6 +91,7 @@ export default class RNBuilder extends AbsBuilder {
             const ossFileName = `${this.outputFilePrefix()}_rn_bundle_android.zip`;
             if (this.config.output?.oss) {
                 await OSSUtils.upload(`${this.config.output.oss.ossKeyPrefix}/${ossFileName}`, this.androidZipPath, this.config.output.oss);
+                await HttpClient.submitAppRecord(this.config, this.androidZipPath, ossFileName);
             }
         }
     }

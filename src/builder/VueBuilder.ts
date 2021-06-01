@@ -3,6 +3,7 @@ import shelljs from 'shelljs'
 import FELog from "../utls/FELog";
 import path from 'path'
 import OSSUtils from "../utls/OSSUtils";
+import HttpClient from "../utls/HttpClient";
 
 export default class VueBuilder extends AbsBuilder {
     outputPath: string | null = null;
@@ -29,8 +30,9 @@ export default class VueBuilder extends AbsBuilder {
 
     async upload() {
         const ossFileName = `${this.outputFilePrefix()}`;
-        if (this.config.output?.oss) {
-            await OSSUtils.upload(`${this.config.output.oss.ossKeyPrefix}/${ossFileName}`, this.outputPath!, this.config.output.oss);
+        if (this.config.output?.oss && this.outputPath) {
+            await OSSUtils.upload(`${this.config.output.oss.ossKeyPrefix}/${ossFileName}`, this.outputPath, this.config.output.oss);
+            await HttpClient.submitAppRecord(this.config, this.outputPath, ossFileName);
         }
     }
 }

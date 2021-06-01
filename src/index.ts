@@ -7,6 +7,7 @@ import { BUILD_TYPE, PROJECT_TYPE } from "./FEBuilderConfig";
 yargs(process.argv.slice(2)).version('0.0.1')
     .command('build', 'FE AUTO BUILDER', yargs => {
         return yargs
+            //basic
             .option('appid', {
                 type: 'string',
                 demandOption: true,
@@ -29,6 +30,73 @@ yargs(process.argv.slice(2)).version('0.0.1')
                 demandOption: true,
                 desc: '打包环境，由各个项目决定',
             })
+            .option('prd', {
+                boolean: true,
+                desc: '是否是生产环境',
+            })
+            .option('branch', {
+                type: 'string',
+                demandOption: true,
+                desc: '打包分支'
+            })
+            .option('repository', {
+                type: 'string',
+                demandOption: true,
+                desc: '仓库地址'
+            })
+            //OSS
+            .option('keyprefix', {
+                type: 'string',
+                desc: 'OSS 存储路径前缀',
+            })
+            .option('accesssecret', {
+                type: 'string',
+                desc: 'OSS Access Secret',
+            })
+            .option('accesskey', {
+                type: 'string',
+                desc: 'OSS Access Key',
+            })
+            .option('bucket', {
+                type: 'string',
+                desc: 'OSS Bucket Name',
+            })
+            .option('endpoint', {
+                type: 'string',
+                desc: 'OSS Endpoint',
+            })
+            //ios sign
+            .option('sign-identify', {
+                type: 'string',
+                desc: 'iOS证书名称',
+            })
+            .option('profile-uuid', {
+                type: 'string',
+                desc: 'iOS Profile UUID',
+            })
+            //android sign
+            .option('keystore-path', {
+                type: 'string',
+                desc: 'Android Keystore Path',
+            })
+            .option('keyalias', {
+                type: 'string',
+                desc: 'Android Key Alias',
+            })
+            .option('keystore-password', {
+                type: 'string',
+                desc: 'Android Keystore Password',
+            })
+            .option('keypassword', {
+                type: 'string',
+                desc: 'Android Key Password',
+            })
+            .option('jiagu', {
+                boolean: true,
+                desc: '是否加固',
+            })
+
+            //other
             .option('channel', {
                 type: 'string',
                 desc: '打包渠道',
@@ -36,11 +104,6 @@ yargs(process.argv.slice(2)).version('0.0.1')
             .option('build-version', {
                 type: 'string',
                 desc: '指定打包版本号'
-            })
-            .option('branch', {
-                type: 'string',
-                desc: '打包分支',
-                default: '未知'
             })
             .option('operator', {
                 type: 'string',
@@ -53,6 +116,11 @@ yargs(process.argv.slice(2)).version('0.0.1')
                 choices: ['mgmt', 'localscript'],
                 default: 'localscript'
             })
+            .group(['appid', 'project-type', 'build-type', 'env', 'prd', 'branch', 'repository'], 'BASIC')
+            .group(['keyprefix', 'accesssecret', 'accesskey', 'bucket', 'endpoint'], 'OSS Config')
+            .group(['sign-identify', 'profile-uuid'], 'iOS Sign Config')
+            .group(['keystore-path', 'keyalias', 'keystore-password', 'keypassword', 'jiagu'], 'Android Sign Config')
+            .group(['channel', 'build-version', 'operator', 'from'], 'Others')
             .help()
     }, argv => {
         FEBuilder.start({
@@ -60,22 +128,31 @@ yargs(process.argv.slice(2)).version('0.0.1')
             projectType: argv["project-type"] as PROJECT_TYPE,
             buildType: argv["build-type"] as BUILD_TYPE,
             env: argv.env,
+            isPrdEnv: argv.prd,
+            branch: argv.branch,
+            // url: 'http://git.keking.cn/logistics-front/banma-web-ctms-pc.git',
+            // url: 'http://git.keking.cn/app_ios/keking-app-ctms.git',
+            url: argv.repository,
+
+            ossKeyPrefix: argv.keyprefix,
+            ossAK: argv.accesskey,
+            ossAS: argv.accesssecret,
+            ossBucket: argv.bucket,
+            ossEndpoint: argv.endpoint,
+
+            keystorePath: argv["keystore-path"],
+            keyAlias: argv.keyalias,
+            keystorePassword: argv["keystore-password"],
+            keyPassword: argv.keypassword,
+            jiagu: argv.jiagu,
+
+            signIdentify: argv["sign-identify"],
+            profileUUID: argv["profile-uuid"],
+
             channel: argv.channel,
             version: argv["build-version"],
-            branch: 'dev.ysl',
-            // url: 'http://git.keking.cn/logistics-front/banma-web-ctms-pc.git',
-            url: 'http://git.keking.cn/app_ios/keking-app-ctms.git',
-
-
-
-            keystorePath: '/Users/y.liang/.ST_AUTO_BUILD_HOME/_keystore/release-key.keystore',
-            keyAlias: 'release-alias.keystore',
-            keystorePassword: 'CoM_mUstANg_aPp_oSe820t3Y21Z5',
-            keyPassword: 'CoM_mUstANg_aPp_oSe820t3Y21Z5',
-            jiagu: true,
-
-            signIdentify: 'Apple Distribution: Shanghai Banma Laila Logistics Technology Co., Ltd. (F65G38NM7G)',
-            profileUUID: '8d9a23bc-a476-429b-87bf-9256ed365f52',
+            operator: argv.operator,
+            from: argv.from,
         })
     })
     .locale('en')

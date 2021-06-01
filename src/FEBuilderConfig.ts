@@ -27,6 +27,7 @@ export interface FEArgv {
     projectType: PROJECT_TYPE;
     buildType: BUILD_TYPE;
     env: string;//打包环境
+    isPrdEnv?: boolean;
     channel?: string;//打包渠道
     version?: string;//自定义打包版本号
 
@@ -63,10 +64,12 @@ export interface BuildOptions {
     projectType: PROJECT_TYPE;
     buildType: BUILD_TYPE;//根据PROJECT_TYPE来决定默认值
     env: string;//打包环境
+    isPrdEnv?: boolean;//是否为生产环境
     channel?: string;//打包渠道
     version?: string;//打包版本号
-    buildCode: number;//编译流水号
+    buildCode?: number;//编译流水号
     bundleBuildCode?: number;//附属资源包的编译号
+    bundleVersion?: string;//附属资源包的版本号
     latestSubmitId?: string;//最近一条提交日志
 }
 

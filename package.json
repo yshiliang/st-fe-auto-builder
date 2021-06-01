@@ -7,14 +7,17 @@
   "license": "MIT",
   "dependencies": {
     "ali-oss": "^6.15.2",
+    "axios": "^0.21.1",
     "colors": "^1.4.0",
     "moment": "^2.29.1",
+    "qs": "^6.10.1",
     "shelljs": "^0.8.4",
     "yargs": "^17.0.1"
   },
   "devDependencies": {
     "@types/ali-oss": "^6.0.8",
     "@types/colors": "^1.2.1",
+    "@types/qs": "^6.9.6",
     "@types/shelljs": "^0.8.8",
     "@types/yargs": "^16.0.1"
   }

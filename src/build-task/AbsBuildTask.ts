@@ -155,6 +155,7 @@ export default class AbsBuildTask {
             projectType: argv.projectType,
             buildType: argv.buildType,
             env: argv.env,
+            isPrdEnv: argv.isPrdEnv,
             channel: argv.channel,
             version: argv.version,
             buildCode: buildCodeInfo.nextBuildCode(argv.buildType),
