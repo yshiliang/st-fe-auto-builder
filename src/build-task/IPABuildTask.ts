@@ -50,6 +50,7 @@ export default class IPABuildTask extends AbsBuildTask {
             if (rt) rt = shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :CFBundleVersion ${config.build.buildCode}" ${plistPath}`).code === 0;
 
             if (rt && config.build.projectType === 'rn') {
+                config.build.bundleVersion = require(path.resolve(this.mainProjectRootDir!, 'package.json')).version;
                 rt = FEFSUtils.exchangeRNEnvironmentConfig(this.mainProjectRootDir!, config.build.env, config.build.channel);
                 shelljs.sed('-i', /\"versionCode\":.*,/, `\"versionCode\": ${config.build.bundleBuildCode},`, '../package.json');//处理 rn build code
             }

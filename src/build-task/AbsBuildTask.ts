@@ -159,7 +159,7 @@ export default class AbsBuildTask {
             channel: argv.channel,
             version: argv.version,
             buildCode: buildCodeInfo.nextBuildCode(argv.buildType),
-            bundleBuildCode: argv.projectType === 'rn' ? buildCodeInfo.nextBuildCode('rn') : undefined,
+            bundleBuildCode: (argv.projectType === 'rn' && argv.buildType !== 'rn') ? buildCodeInfo.nextBuildCode('rn') : undefined,
             latestSubmitId,
         }
 

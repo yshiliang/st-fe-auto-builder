@@ -48,6 +48,7 @@ export default class APKBuildTask extends AbsBuildTask {
             shelljs.sed('-i', /BUILD_CODE.*=.*/, `BUILD_CODE=${config.build.buildCode}`, './gradle.properties');
 
             if (config.build.projectType === 'rn') {
+                config.build.bundleVersion = require(path.resolve(this.mainProjectRootDir!, 'package.json')).version;
                 rt = FEFSUtils.exchangeRNEnvironmentConfig(this.mainProjectRootDir!, config.build.env, config.build.channel);
                 shelljs.sed('-i', /\"versionCode.*\":.*,/, `\"versionCode\": ${config.build.bundleBuildCode},`, '../package.json');//处理 rn build code
             }

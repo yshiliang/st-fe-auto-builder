@@ -123,15 +123,13 @@ yargs(process.argv.slice(2)).version('0.0.1')
             .group(['channel', 'build-version', 'operator', 'from'], 'Others')
             .help()
     }, argv => {
-        FEBuilder.start({
+        const rt = FEBuilder.start({
             appId: argv.appid,
             projectType: argv["project-type"] as PROJECT_TYPE,
             buildType: argv["build-type"] as BUILD_TYPE,
             env: argv.env,
             isPrdEnv: argv.prd,
             branch: argv.branch,
-            // url: 'http://git.keking.cn/logistics-front/banma-web-ctms-pc.git',
-            // url: 'http://git.keking.cn/app_ios/keking-app-ctms.git',
             url: argv.repository,
 
             ossKeyPrefix: argv.keyprefix,
@@ -154,6 +152,8 @@ yargs(process.argv.slice(2)).version('0.0.1')
             operator: argv.operator,
             from: argv.from,
         })
+
+        if (!rt) process.exit(-1);
     })
     .locale('en')
     .help()
