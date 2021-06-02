@@ -22,6 +22,7 @@ export default class HttpClient {
             if (new RegExp(/.*ios.*/).test(resName)) os = 'ios';
             else if (new RegExp(/.*android.*/).test(resName)) os = 'android';
         }
+        const url = `${config.output?.oss?.ossKeyPrefix}/${resName}`.replace('.ipa', '_itms.plist');
         return this.uploadAppResource({
             name: resName,
             appId: config.appId,
@@ -34,7 +35,7 @@ export default class HttpClient {
             buildCode: config.build.buildCode,
             rnVersion: config.build.bundleVersion,
             rnBuildCode: config.build.bundleBuildCode,
-            url: `${config.output?.oss?.ossKeyPrefix}/${resName}`,
+            url,
             size,
             operator: config.operateRecord?.operator,
             from: config.operateRecord?.from,
