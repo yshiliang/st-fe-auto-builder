@@ -155,6 +155,7 @@ yargs(process.argv.slice(2)).version('0.0.1')
         }).then(rt => {
             if (rt) {
                 FELog.log('build successful')
+                process.exitCode = 0;
             } else {
                 FELog.log('build failed')
                 process.exitCode = 5;
