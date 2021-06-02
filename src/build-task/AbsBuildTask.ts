@@ -23,7 +23,7 @@ import BuildCode from "../BuildCode";
  * 根据projectType和buildType，及其它参数，校验打包环境，并创建打包所需要环境
  * 与builder一一对应
  */
-export default class AbsBuildTask {
+export default abstract class AbsBuildTask {
     argv: FEArgv;
     workspace: string | null = null;
     builder: AbsBuilder | null = null;
@@ -175,8 +175,8 @@ export default class AbsBuildTask {
     }
 
     //子类实现
-    protected onCheckProjectRootDir(): string | null { return null }
-    protected onInstallDependencies(projectRootDir: string): boolean { return false }
-    protected onPrepareBuildEnvironment(config: FEBuilderConfig): boolean { return false }
-    protected onCreateBuilder(config: FEBuilderConfig): AbsBuilder | null { return null }
+    protected abstract onCheckProjectRootDir(): string | null;
+    protected abstract onInstallDependencies(projectRootDir: string): boolean;
+    protected abstract onPrepareBuildEnvironment(config: FEBuilderConfig): boolean;
+    protected abstract onCreateBuilder(config: FEBuilderConfig): AbsBuilder;
 }

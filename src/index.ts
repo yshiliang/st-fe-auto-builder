@@ -3,6 +3,7 @@
 import yargs from "yargs";
 import FEBuilder from "./FEBuilder";
 import { BUILD_TYPE, PROJECT_TYPE } from "./FEBuilderConfig";
+import FELog from "./utls/FELog";
 
 yargs(process.argv.slice(2)).version('0.0.1')
     .command('build', 'FE AUTO BUILDER', yargs => {
@@ -123,7 +124,7 @@ yargs(process.argv.slice(2)).version('0.0.1')
             .group(['channel', 'build-version', 'operator', 'from'], 'Others')
             .help()
     }, argv => {
-        const rt = FEBuilder.start({
+        FEBuilder.start({
             appId: argv.appid,
             projectType: argv["project-type"] as PROJECT_TYPE,
             buildType: argv["build-type"] as BUILD_TYPE,
@@ -151,9 +152,19 @@ yargs(process.argv.slice(2)).version('0.0.1')
             version: argv["build-version"],
             operator: argv.operator,
             from: argv.from,
+        }).then(rt => {
+            if (rt) {
+                FELog.log('build successful')
+            } else {
+                FELog.log('build failed')
+                process.exitCode = 5;
+            }
+
+        }).catch(e => {
+            FELog.log(`build with err ${e} `)
+            process.exitCode = 15;
         })
 
-        if (!rt) process.exit(-1);
     })
     .locale('en')
     .help()
