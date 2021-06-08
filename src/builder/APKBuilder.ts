@@ -12,7 +12,7 @@ export default class APKBuilder extends AbsBuilder {
     async build(): Promise<boolean> {
         //gradle打包
         const signInfo = this.config.sign?.android;
-        const env = this.config.build.env!;
+        const env = this.config.build.isPrdEnv ? 'release' : this.config.build.env!;
         const variantsName = env;
         const buildShell = `app:assemble${env[0].toUpperCase()}${env.substr(1)}`;
 
