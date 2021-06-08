@@ -5,6 +5,9 @@
   "main": "",
   "author": "yangshiliang",
   "license": "MIT",
+  "scripts": {
+    "build": "rm -rf ./dist & tsc"
+  },
   "dependencies": {
     "ali-oss": "^6.15.2",
     "axios": "^0.21.1",
