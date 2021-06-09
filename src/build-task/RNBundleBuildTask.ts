@@ -6,6 +6,7 @@ import shelljs from 'shelljs'
 import FEBuilderConfig from "../FEBuilderConfig";
 import RNBuilder from "../builder/RNBuilder";
 import FEShell from "../utls/FEShell";
+import fs from 'fs'
 
 export default class RNBundleBuildTask extends AbsBuildTask {
     //检查项目类型是否正确（有没有对应的配置文件）
@@ -24,12 +25,24 @@ export default class RNBundleBuildTask extends AbsBuildTask {
     protected onPrepareBuildEnvironment(config: FEBuilderConfig): boolean {
         let rt = shelljs.cd(config.build.projectRootDir).code === 0;
         if (rt) {
-            if (config.build.version) {
-                shelljs.sed('-i', /\"version\":.*,/, `\"version\": \"${config.build.version}\",`, './package.json');
+            const manifest = path.resolve(config.build.projectRootDir, 'manifest.js');
+            if (fs.existsSync(manifest)) {
+                if (config.build.version) {
+                    shelljs.sed('-i', /.*version.*/, `version: ${config.build.version},`, manifest);
+                } else {
+                    config.build.version = require(manifest).version;
+                }
+                shelljs.sed('-i', /.*versionCode.*/, `versionCode: ${config.build.buildCode},`, manifest);
             } else {
-                config.build.version = require(path.resolve(config.build.projectRootDir, 'package.json')).version;
+                if (config.build.version) {
+                    shelljs.sed('-i', /\"version\":.*,/, `\"version\": \"${config.build.version}\",`, './package.json');
+                } else {
+                    config.build.version = require(path.resolve(config.build.projectRootDir, 'package.json')).version;
+                }
+                shelljs.sed('-i', /\"versionCode\":.*,/, `\"versionCode\": ${config.build.buildCode},`, './package.json');
             }
-            shelljs.sed('-i', /\"versionCode\":.*,/, `\"versionCode\": ${config.build.buildCode},`, './package.json');
+
+
 
             rt = FEFSUtils.exchangeRNEnvironmentConfig(config.build.projectRootDir, config.build.env, config.build.channel);
         }
