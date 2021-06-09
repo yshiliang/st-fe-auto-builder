@@ -136,9 +136,12 @@ export default abstract class AbsBuildTask {
             }
         }
 
-        if (argv.signIdentify && argv.profileUUID) {
+        if (argv.bundleId && argv.teamId && argv.signIdentify && argv.profileName && argv.profileUUID) {
             sign.ios = {
+                bundleId: argv.bundleId,
+                teamId: argv.teamId,
                 signIdentity: argv.signIdentify,
+                profileName: argv.profileName,
                 profileUUID: argv.profileUUID,
             }
         }
@@ -166,6 +169,7 @@ export default abstract class AbsBuildTask {
         buildCodeInfo.save();
         return {
             appId: argv.appId,
+            appIcon: argv.appIcon,
             build: buildOptions,
             repo,
             output,

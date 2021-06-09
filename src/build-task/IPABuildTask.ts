@@ -6,6 +6,7 @@ import shelljs from 'shelljs'
 import FEBuilderConfig from "../FEBuilderConfig";
 import IPABuilder from "../builder/IPABuilder";
 import FEShell from "../utls/FEShell";
+import fs from 'fs'
 
 export default class IPABuildTask extends AbsBuildTask {
     private mainProjectRootDir: string | null = null;//宿主工程根目录
@@ -38,7 +39,28 @@ export default class IPABuildTask extends AbsBuildTask {
         let appName = FEFSUtils.findFilenameWithExtension(config.build.projectRootDir, 'xcodeproj');
         console.log('app name is :', appName);
         let rt = !!appName && shelljs.cd(config.build.projectRootDir).code === 0;
-        if (rt) {
+
+        const signInfo = config.sign?.ios;
+        if (!signInfo) {
+            rt = false;
+            FELog.error('ios 签名信息不存在，无法签名！')
+        }
+
+        if (rt && signInfo) {
+            //处理export options
+            FELog.log('自动配置ExportOptions信息');
+            const exportPlist = path.resolve(config.build.projectRootDir, 'ExportOptions.plist');
+            const rawExportPlist = path.resolve(__dirname, '../assets/ExportOptions.plist');
+            fs.copyFileSync(rawExportPlist, exportPlist);
+            shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :teamID ${signInfo.teamId}" ${exportPlist}`);
+            shelljs.exec(`/usr/libexec/PlistBuddy -c "Add :provisioningProfiles:${signInfo.bundleId} string ${signInfo.profileName}" ${exportPlist}`);
+            if (config.build.isPrdEnv) {
+                const exportPlist = path.resolve(config.build.projectRootDir, 'ExportOptions_appstore.plist');
+                const rawExportPlist = path.resolve(__dirname, '../assets/ExportOptions_appstore.plist');
+                fs.copyFileSync(rawExportPlist, exportPlist);
+                shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :teamID ${signInfo.teamId}" ${exportPlist}`);
+            }
+
             const plistPath = `./${appName}/Info.plist`;
             const pbxprojPath = `./${appName}.xcodeproj/project.pbxproj`;
             if (config.build.version) {

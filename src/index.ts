@@ -67,9 +67,21 @@ yargs(process.argv.slice(2)).version('0.0.2')
                 desc: 'OSS Endpoint',
             })
             //ios sign
+            .option('bundleid', {
+                type: 'string',
+                desc: 'iOS Bundle ID',
+            })
+            .option('teamid', {
+                type: 'string',
+                desc: 'iOS Team ID',
+            })
             .option('sign-identify', {
                 type: 'string',
                 desc: 'iOS证书名称',
+            })
+            .option('profile-name', {
+                type: 'string',
+                desc: 'iOS Profile Name',
             })
             .option('profile-uuid', {
                 type: 'string',
@@ -98,6 +110,10 @@ yargs(process.argv.slice(2)).version('0.0.2')
             })
 
             //other
+            .option('icon', {
+                type: 'string',
+                desc: 'app icon',
+            })
             .option('channel', {
                 type: 'string',
                 desc: '打包渠道',
@@ -119,13 +135,14 @@ yargs(process.argv.slice(2)).version('0.0.2')
             })
             .group(['appid', 'project-type', 'build-type', 'env', 'prd', 'branch', 'repository'], 'BASIC')
             .group(['keyprefix', 'accesssecret', 'accesskey', 'bucket', 'endpoint'], 'OSS Config')
-            .group(['sign-identify', 'profile-uuid'], 'iOS Sign Config')
+            .group(['bundleid', 'teamId', 'sign-identify', 'profile-name', 'profile-uuid'], 'iOS Sign Config')
             .group(['keystore-path', 'keyalias', 'keystore-password', 'keypassword', 'jiagu'], 'Android Sign Config')
-            .group(['channel', 'build-version', 'operator', 'from'], 'Others')
+            .group(['icon', 'channel', 'build-version', 'operator', 'from'], 'Others')
             .help()
     }, argv => {
         FEBuilder.start({
             appId: argv.appid,
+            appIcon: argv.icon,
             projectType: argv["project-type"] as PROJECT_TYPE,
             buildType: argv["build-type"] as BUILD_TYPE,
             env: argv.env,
@@ -145,7 +162,10 @@ yargs(process.argv.slice(2)).version('0.0.2')
             keyPassword: argv.keypassword,
             jiagu: argv.jiagu,
 
+            bundleId: argv.bundleid,
+            teamId: argv.teamid,
             signIdentify: argv["sign-identify"],
+            profileName: argv["profile-name"],
             profileUUID: argv["profile-uuid"],
 
             channel: argv.channel,

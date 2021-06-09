@@ -22,7 +22,7 @@ export function verifyBuildType(projectType: PROJECT_TYPE, buildType: BUILD_TYPE
 
 export interface FEArgv {
     appId: string;//唯一标识每一个使用FEAutoBuilder进行自动打包的应用
-
+    appIcon?: string;
     //build options
     projectType: PROJECT_TYPE;
     buildType: BUILD_TYPE;
@@ -50,7 +50,10 @@ export interface FEArgv {
     jiagu?: boolean;
 
     //ios sign
+    bundleId?: string;
+    teamId?: string;
     signIdentify?: string;
+    profileName?: string;
     profileUUID?: string;
 
     //operate record
@@ -75,7 +78,10 @@ export interface BuildOptions {
 
 export interface Sign {
     ios?: {
+        bundleId: string;
+        teamId: string;
         signIdentity: string;
+        profileName: string;
         profileUUID: string;
     },
     android?: {
@@ -110,6 +116,7 @@ export interface OperateRecord {
 
 export default interface FEBuilderConfig {
     appId: string;//唯一标识每一个使用FEAutoBuilder进行自动打包的应用
+    appIcon?: string;
     build: BuildOptions;//打包参数配置
     output?: Output;//
     repo?: Repository;//代码仓库

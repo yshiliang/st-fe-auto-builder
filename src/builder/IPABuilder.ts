@@ -84,7 +84,8 @@ export default class IPABuilder extends AbsBuilder {
     async upload() {
         const ossFileName = `${this.outputFilePrefix()}.ipa`
         const ossInfo = this.config.output?.oss;
-        if (ossInfo && this.appName && this.ipaPath) {
+        const signInfo = this.config.sign?.ios;
+        if (ossInfo && signInfo && this.appName && this.ipaPath) {
             await OSSUtils.upload(`${ossInfo.ossKeyPrefix}/${ossFileName}`, this.ipaPath, ossInfo);
 
             //itms.plist
@@ -93,17 +94,15 @@ export default class IPABuilder extends AbsBuilder {
             const ipaDownloadUrl = `${ossInfo.endpoint.replace(/https:\/\//, 'https://' + ossInfo.bucket + '.')}/${ossInfo.ossKeyPrefix}/${ossFileName}`;
 
             const itmsPlist = path.resolve(this.ipaPath!, '../manifest.plist');
-            const manifestPlist = path.resolve(this.config.build.projectRootDir, 'manifest.plist');
-            if (!fs.existsSync(manifestPlist)) {
-                FELog.log('工程主目录下配置文件缺失：manifest.plist');
-                return;
-            }
-            fs.copyFileSync(manifestPlist, itmsPlist);
+            const rawItmsPlist = path.resolve(__dirname, '../assets/manifest.plist');
+            fs.copyFileSync(rawItmsPlist, itmsPlist);
             shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :items:0:assets:0:url ${ipaDownloadUrl}" ${itmsPlist}`);
-            shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :items:0:metadata:bundle-version ${this.config.build.version}" ${itmsPlist}`)
+            shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :items:0:assets:1:url ${this.config.appIcon || ''}" ${itmsPlist}`);
+            shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :items:0:metadata:bundle-version ${this.config.build.version}" ${itmsPlist}`);
             shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :items:0:metadata:title ${displayName}-${this.config.build.env.toUpperCase()}" ${itmsPlist}`);
+            shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :items:0:metadata:bundle-identifier ${signInfo.bundleId}" ${itmsPlist}`);
 
-            const ossITMSKey = `${ossInfo.ossKeyPrefix}/${this.outputFilePrefix()}_itms.plist`
+            const ossITMSKey = `${ossInfo.ossKeyPrefix}/${this.outputFilePrefix()}_itms.plist`;
             await OSSUtils.upload(ossITMSKey, itmsPlist, ossInfo);
             await HttpClient.submitAppRecord(this.config, this.ipaPath, ossFileName);
         }

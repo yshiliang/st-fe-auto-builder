@@ -10,8 +10,6 @@
 	<string>ad-hoc</string>
 	<key>provisioningProfiles</key>
 	<dict>
-		<key>请正确填写bundleID</key>
-		<string>请正确填写profile的名字</string>
 	</dict>
 	<key>signingCertificate</key>
 	<string>Apple Distribution</string>

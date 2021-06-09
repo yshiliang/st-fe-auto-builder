@@ -48,7 +48,7 @@ export default class FEBuilder {
                         build_code: ${builder?.config.build.buildCode}
                         git_branch: ${builder?.config.repo?.branch || '未知'} 
                         operator: ${builder?.config.operateRecord?.operator || '未知'}`)
-            success = await builder!.build()
+            success = await builder!.build();
             if (success) {
                 FELog.log(`end build [${builder?.config.build.buildType}] for [${builder?.config.appId}] with environment: ${builder?.config.build.env}
                         channel: ${builder?.config.build.channel || '默认'}   
