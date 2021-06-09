@@ -50,13 +50,13 @@ export default class IPABuildTask extends AbsBuildTask {
             //处理export options
             FELog.log('自动配置ExportOptions信息');
             const exportPlist = path.resolve(config.build.projectRootDir, 'ExportOptions.plist');
-            const rawExportPlist = path.resolve(__dirname, '../assets/ExportOptions.plist');
+            const rawExportPlist = path.resolve(__dirname, '../../assets/ExportOptions.plist');
             fs.copyFileSync(rawExportPlist, exportPlist);
             shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :teamID ${signInfo.teamId}" ${exportPlist}`);
             shelljs.exec(`/usr/libexec/PlistBuddy -c "Add :provisioningProfiles:${signInfo.bundleId} string ${signInfo.profileName}" ${exportPlist}`);
             if (config.build.isPrdEnv) {
                 const exportPlist = path.resolve(config.build.projectRootDir, 'ExportOptions_appstore.plist');
-                const rawExportPlist = path.resolve(__dirname, '../assets/ExportOptions_appstore.plist');
+                const rawExportPlist = path.resolve(__dirname, '../../assets/ExportOptions_appstore.plist');
                 fs.copyFileSync(rawExportPlist, exportPlist);
                 shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :teamID ${signInfo.teamId}" ${exportPlist}`);
             }

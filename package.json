@@ -6,7 +6,7 @@
   "author": "yangshiliang",
   "license": "MIT",
   "scripts": {
-    "build": "rm -rf ./dist & tsc"
+    "build": "node build.js"
   },
   "dependencies": {
     "ali-oss": "^6.15.2",

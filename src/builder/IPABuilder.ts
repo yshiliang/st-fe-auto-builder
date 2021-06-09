@@ -94,7 +94,7 @@ export default class IPABuilder extends AbsBuilder {
             const ipaDownloadUrl = `${ossInfo.endpoint.replace(/https:\/\//, 'https://' + ossInfo.bucket + '.')}/${ossInfo.ossKeyPrefix}/${ossFileName}`;
 
             const itmsPlist = path.resolve(this.ipaPath!, '../manifest.plist');
-            const rawItmsPlist = path.resolve(__dirname, '../assets/manifest.plist');
+            const rawItmsPlist = path.resolve(__dirname, '../../assets/manifest.plist');
             fs.copyFileSync(rawItmsPlist, itmsPlist);
             shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :items:0:assets:0:url ${ipaDownloadUrl}" ${itmsPlist}`);
             shelljs.exec(`/usr/libexec/PlistBuddy -c "Set :items:0:assets:1:url ${this.config.appIcon || ''}" ${itmsPlist}`);
