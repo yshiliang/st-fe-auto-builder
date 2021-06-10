@@ -28,11 +28,11 @@ export default class RNBundleBuildTask extends AbsBuildTask {
             const manifest = path.resolve(config.build.projectRootDir, 'manifest.js');
             if (fs.existsSync(manifest)) {
                 if (config.build.version) {
-                    shelljs.sed('-i', /.*version.*/, `version: ${config.build.version},`, manifest);
+                    shelljs.sed('-i', /.*version\s*:.*/, `version: ${config.build.version},`, manifest);
                 } else {
                     config.build.version = require(manifest).version;
                 }
-                shelljs.sed('-i', /.*versionCode.*/, `versionCode: ${config.build.buildCode},`, manifest);
+                shelljs.sed('-i', /.*versionCode\s*:.*/, `versionCode: ${config.build.buildCode},`, manifest);
             } else {
                 if (config.build.version) {
                     shelljs.sed('-i', /\"version\":.*,/, `\"version\": \"${config.build.version}\",`, './package.json');

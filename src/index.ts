@@ -5,7 +5,7 @@ import FEBuilder from "./FEBuilder";
 import { BUILD_TYPE, PROJECT_TYPE } from "./FEBuilderConfig";
 import FELog from "./utls/FELog";
 
-yargs(process.argv.slice(2)).version('0.0.2')
+yargs(process.argv.slice(2)).version('0.0.3')
     .command('build', 'FE AUTO BUILDER', yargs => {
         return yargs
             //basic
