@@ -67,7 +67,9 @@ export default abstract class AbsBuildTask {
             FELog.log(`git clone ${this.argv.url} and checkout to Branch origin/${this.argv.branch}`);
             code = shelljs.exec(`git clone ${this.argv.url} ./`).code;
         }
-        if (code === 0) code = shelljs.exec(`git checkout -b ${this.argv.branch} origin/${this.argv.branch}`).code;
+        if (this.argv.branch !== 'master') {//非master分支，则需要执行checkout
+            if (code === 0) code = shelljs.exec(`git checkout -b ${this.argv.branch} origin/${this.argv.branch}`).code;
+        }
         if (code === 0) code = shelljs.exec('git log -5').code;
         if (code === 0) {
             const rt = shelljs.exec('git log -1 --pretty=%H', { silent: true });
