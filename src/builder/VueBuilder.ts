@@ -8,8 +8,10 @@ import HttpClient from "../utls/HttpClient";
 export default class VueBuilder extends AbsBuilder {
     outputPath: string | null = null;
     async build(): Promise<boolean> {
-        //vue-cli-service build --mode uat 
-        if (shelljs.exec(`npx vue-cli-service build --mode ${this.config.build.env}`).code !== 0) {
+        //npx vue-cli-service build --mode uat 
+        const { env, isPrdEnv } = this.config.build
+        const modeStr = isPrdEnv ? '' : `--mode ${env}`
+        if (shelljs.exec(`yarn build ${modeStr}`).code !== 0) {
             FELog.error('打包失败')
             return false;
         }
